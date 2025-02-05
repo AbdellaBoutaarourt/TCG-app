@@ -90,7 +90,7 @@ const SearchScreen = () => {
             <ScrollView showsVerticalScrollIndicator={false}>
                 {categories.map((category, index) => (
                     <TouchableOpacity key={index} style={styles.categoryItem}
-                        onPress={() => navigation.navigate("CategoryProducts", { category: category.name })}
+                        onPress={() => navigation.navigate("CategoryProducts", { categoryName: category.name })}
                     >
                         <View style={styles.categoryContent}>
                             <Text style={styles.categoryText}>{category.icon}</Text>
@@ -108,16 +108,16 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#fff",
-        paddingHorizontal: 16,
-        paddingTop: 20,
+        paddingTop: 40,
     },
     searchBar: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#F5F5F5",
+        backgroundColor: "white",
+        borderColor: "#CFCFCF",
+        borderWidth: 1,
         paddingHorizontal: 12,
         paddingVertical: 10,
-        borderRadius: 25,
         marginBottom: 10,
     },
     searchInput: {
@@ -132,7 +132,8 @@ const styles = StyleSheet.create({
         flexWrap: "wrap",
         gap: 5,
         alignItems: 'flex-start',
-        alignContent: 'flex-start'
+        alignContent: 'flex-start',
+        paddingHorizontal: 16,
     },
     filterButton: {
         paddingHorizontal: 15,
@@ -157,7 +158,8 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         paddingVertical: 12,
         borderBottomWidth: 1,
-        borderBottomColor: "#E0E0E0",
+        borderBottomColor: "#787878",
+        paddingHorizontal: 16,
     },
     categoryContent: {
         flexDirection: "row",

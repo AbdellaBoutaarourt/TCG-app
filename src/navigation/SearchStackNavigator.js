@@ -9,14 +9,18 @@ const SearchStackNavigator = () => {
     return (
         <Stack.Navigator>
             <Stack.Screen
-                name="Search"
+                name="Recherche"
                 component={SearchScreen}
-                options={{ headerTitle: 'Recherche' }}
+                options={{ headerShown: false }}
             />
             <Stack.Screen
                 name="CategoryProducts"
                 component={CategoryProductsScreen}
-                options={{ title: 'Produits de catégorie' }}
+                options={({ route }) => ({
+                    headerTitle: route.params?.categoryName,
+                    headerTitleAlign: 'center',
+                    headerTitleStyle: { fontFamily: "InterSemiBold" }
+                })}
             />
         </Stack.Navigator>
     );

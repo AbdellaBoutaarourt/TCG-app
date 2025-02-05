@@ -29,7 +29,7 @@ const BottomTabNavigator = () => {
                 tabBarStyle: {
                     backgroundColor: '#fff',
                     borderTopWidth: 0,
-                    shadowColor: '#000',
+                    shadowColor: 'black',
                     shadowOffset: { width: 0, height: -5 },
                     shadowOpacity: 0.25,
                     shadowRadius: 4,
@@ -43,7 +43,7 @@ const BottomTabNavigator = () => {
             })}
         >
             <Tab.Screen name="Accueil" component={HomeScreen} options={{ tabBarLabel: () => null, headerTitleAlign: "center", headerTitleStyle: { fontFamily: "InterSemiBold" } }} />
-            <Tab.Screen name="Recherche" component={SearchStackNavigator} options={{ tabBarLabel: () => null, headerTitleAlign: "center", headerTitleStyle: { fontFamily: "InterSemiBold" } }} />
+            <Tab.Screen name="Recherche" component={SearchStackNavigator} options={{ tabBarLabel: () => null, headerShown: false }} />
             <Tab.Screen name="Favoris" component={FavoritesScreen} options={{ tabBarLabel: () => null, headerTitleAlign: "center", headerTitleStyle: { fontFamily: "InterSemiBold" } }} />
             <Tab.Screen name="Panier" component={CartScreen} options={{ tabBarLabel: () => null, headerTitleAlign: "center", headerTitleStyle: { fontFamily: "InterSemiBold" } }} />
             <Tab.Screen name="Profil" component={ProfileScreen} options={{ tabBarLabel: () => null, headerTitleAlign: "center", headerTitleStyle: { fontFamily: "InterSemiBold" } }} />
