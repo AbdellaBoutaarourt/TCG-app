@@ -5,10 +5,8 @@ const Cartscreen = () => {
     return (
         <View style={styles.container}>
             <Image source={cartImage} style={styles.cartImage} />
-            {/* Message "Votre panier est vide" */}
             <Text style={styles.emptyCartText}>Votre panier est vide</Text>
 
-            {/* Message "À la recherche de produits ?" */}
             <Text style={styles.searchPromptText}>À la recherche de produits ?</Text>
 
             {/* Bouton "Rechercher des produits" */}
@@ -24,12 +22,12 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#fff', // Fond blanc
+        backgroundColor: '#fff',
     },
     cartImage: {
-        width: 280, // Largeur de l'image
-        height: 245, // Hauteur de l'image
-        marginBottom: 20, // Espacement en bas de l'image
+        width: 280,
+        height: 245,
+        marginBottom: 20,
         marginLeft: 30
     },
     emptyCartText: {
