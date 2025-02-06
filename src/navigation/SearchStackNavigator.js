@@ -19,7 +19,7 @@ const SearchStackNavigator = () => {
                 options={({ route }) => ({
                     headerTitle: route.params?.categoryName,
                     headerTitleAlign: 'center',
-                    headerTitleStyle: { fontFamily: "InterSemiBold" }
+                    headerTitleStyle: { fontFamily: "InterBold", fontSize: 13 }
                 })}
             />
         </Stack.Navigator>
