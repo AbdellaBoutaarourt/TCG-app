@@ -32,11 +32,11 @@ const SignupScreen = () => {
         }
 
         try {
-            const response = await axios.post('http://votre-api.com/signup', {
+            const response = await axios.post('http://localhost:3001/clients', {
                 clientType,
                 name,
-                firstName: clientType === 'individual' ? firstName : null, // Inclure firstName seulement pour les particuliers
-                vatNumber: clientType === 'company' ? vatNumber : null, // Inclure vatNumber seulement pour les sociétés
+                firstName: clientType === 'individual' ? firstName : null,
+                vatNumber: clientType === 'company' ? vatNumber : null,
                 email,
                 password,
                 billingAddress,
