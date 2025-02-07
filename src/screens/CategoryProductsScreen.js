@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
         marginTop: 5,
         fontSize: 14,
         fontFamily: 'InterSemiBold',
-        color: '#08744E',
+        color: 'black',
         marginBottom: 4,
         width: '100%',
         textAlign: 'left',

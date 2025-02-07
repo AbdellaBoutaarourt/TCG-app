@@ -1,7 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import cartImage from '../images/cart.png'
+import { useNavigation } from '@react-navigation/native';
+
 const Cartscreen = () => {
+    const navigation = useNavigation();
+
+    const handleSearchButtonPress = () => {
+        navigation.navigate('Recherche');
+    };
+
     return (
         <View style={styles.container}>
             <Image source={cartImage} style={styles.cartImage} />
@@ -9,8 +17,7 @@ const Cartscreen = () => {
 
             <Text style={styles.searchPromptText}>À la recherche de produits ?</Text>
 
-            {/* Bouton "Rechercher des produits" */}
-            <TouchableOpacity style={styles.searchButton}>
+            <TouchableOpacity style={styles.searchButton} onPress={handleSearchButtonPress}>
                 <Text style={styles.searchButtonText}>Rechercher des produits</Text>
             </TouchableOpacity>
         </View>
@@ -28,7 +35,7 @@ const styles = StyleSheet.create({
         width: 280,
         height: 245,
         marginBottom: 20,
-        marginLeft: 30
+        marginLeft: 100
     },
     emptyCartText: {
         fontSize: 20,
