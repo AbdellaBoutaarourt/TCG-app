@@ -22,9 +22,9 @@ const BottomTabNavigator = () => {
                         Panier: focused ? 'cart' : "cart-outline",
                         Profil: focused ? "person" : 'person-outline',
                     };
-                    return <Ionicons name={icons[route.name]} size={30} color={color} />;
+                    return <Ionicons name={icons[route.name]} size={22} color={color} />;
                 },
-                tabBarActiveTintColor: '#08744E',
+                tabBarActiveTintColor: '#01A96E',
                 tabBarInactiveTintColor: 'black',
                 tabBarStyle: {
                     backgroundColor: '#fff',
@@ -42,11 +42,11 @@ const BottomTabNavigator = () => {
                 },
             })}
         >
-            <Tab.Screen name="Accueil" component={HomeScreen} options={{ tabBarLabel: () => null, headerTitleAlign: "center", headerTitleStyle: { fontFamily: "InterSemiBold" } }} />
-            <Tab.Screen name="Recherche" component={SearchStackNavigator} options={{ tabBarLabel: () => null, headerShown: false }} />
-            <Tab.Screen name="Favoris" component={FavoritesScreen} options={{ tabBarLabel: () => null, headerTitleAlign: "center", headerTitleStyle: { fontFamily: "InterSemiBold" } }} />
-            <Tab.Screen name="Panier" component={CartScreen} options={{ tabBarLabel: () => null, headerTitleAlign: "center", headerTitleStyle: { fontFamily: "InterSemiBold" } }} />
-            <Tab.Screen name="Profil" component={ProfileScreen} options={{ tabBarLabel: () => null, headerTitleAlign: "center", headerTitleStyle: { fontFamily: "InterSemiBold" } }} />
+            <Tab.Screen name="Accueil" component={HomeScreen} options={{ headerTitleAlign: "center", headerTitleStyle: { fontFamily: "InterSemiBold" } }} />
+            <Tab.Screen name="Recherche" component={SearchStackNavigator} options={{ headerShown: false }} />
+            <Tab.Screen name="Favoris" component={FavoritesScreen} options={{ headerTitleAlign: "center", headerTitleStyle: { fontFamily: "InterSemiBold" } }} />
+            <Tab.Screen name="Panier" component={CartScreen} options={{ headerTitleAlign: "center", headerTitleStyle: { fontFamily: "InterSemiBold" } }} />
+            <Tab.Screen name="Profil" component={ProfileScreen} options={{ headerTitleAlign: "center", headerTitleStyle: { fontFamily: "InterSemiBold" } }} />
         </Tab.Navigator>
     );
 };
