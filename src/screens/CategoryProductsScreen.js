@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useEffect, useState, useMemo } from 'react';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons, FontAwesome, MaterialIcons } from '@expo/vector-icons';
 
+import logo from '../images/logo.gif'
 const filters = ["Tous", "Bois", "Frigolite", "Plastique", "Papier", "Verre", "Aluminium"];
 
 
@@ -12,6 +13,9 @@ const CategoryProductsScreen = ({ route }) => {
     const { categoryName } = route.params;
     const [selectedFilter, setSelectedFilter] = useState("Tous");
     const [sortOrder, setSortOrder] = useState("asc");
+    const { searchText } = route.params || {};
+    const [filteredProducts, setFilteredProducts] = useState([]);
+    const [isSortedByName, setIsSortedByName] = useState(false);
 
     useEffect(() => {
         fetch('http://localhost:3001/products')
@@ -27,38 +31,57 @@ const CategoryProductsScreen = ({ route }) => {
             });
     }, []);
 
-    const filteredProducts = data.filter((product) =>
-        product.type.toLowerCase() === categoryName.toLowerCase() &&
-        (selectedFilter === "Tous" || product.material.toLowerCase() === selectedFilter.toLowerCase())
-    );
+    useEffect(() => {
+        let filteredData = data.filter((product) =>
+            product.type.toLowerCase().substring(0, 5) === categoryName.toLowerCase().substring(0, 5) &&
+            (selectedFilter === "Tous" || product.material.toLowerCase() === selectedFilter.toLowerCase())
+        );
 
-    const sortedProducts = filteredProducts.sort((a, b) => {
-        if (sortOrder === "asc") {
-            return a.price - b.price;
-        } else {
-            return b.price - a.price;
+        if (searchText) {
+            filteredData = filteredData.filter((product) =>
+                product.name.toLowerCase().includes(searchText.toLowerCase())
+            );
         }
-    });
+
+        setFilteredProducts(filteredData);
+    }, [searchText, data, categoryName, selectedFilter]);
+
+    const sortedProducts = useMemo(() => {
+        return [...filteredProducts].sort((a, b) =>
+            sortOrder === "asc" ? a.price - b.price : b.price - a.price
+        );
+    }, [filteredProducts, sortOrder]);
+
 
     const handleAddToFavorites = (productId) => {
         console.log(`Produit ${productId} ajouté aux favoris`);
-        // Ajoute ici la logique pour ajouter aux favoris
     };
 
     const handleAddToCart = (productId) => {
         console.log(`Produit ${productId} ajouté au panier`);
-        // Ajoute ici la logique pour ajouter au panier
     };
 
     const toggleSortOrder = () => {
         setSortOrder(prevOrder => prevOrder === "asc" ? "desc" : "asc");
     }
 
+    const sortedByName = useMemo(() => {
+        return [...filteredProducts].sort((a, b) =>
+            a.name.localeCompare(b.name)
+        );
+    }, [filteredProducts]);
+
+    const applyNameSort = () => {
+        setIsSortedByName(true);
+    };
+
+    const displayedProducts = isSortedByName ? sortedByName : sortedProducts;
+
+
     if (loading) {
         return (
             <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#0000ff" />
-                <Text>Chargement...</Text>
+                <Image source={logo} />
             </View>
         );
     }
@@ -87,7 +110,7 @@ const CategoryProductsScreen = ({ route }) => {
 
                 <View style={styles.separator} />
 
-                <TouchableOpacity style={styles.sortButton}>
+                <TouchableOpacity style={styles.sortButton} onPress={applyNameSort}>
                     <MaterialIcons name="filter-list" size={20} color="black" />
                     <Text style={styles.sortText}>Filtre</Text>
                 </TouchableOpacity>
@@ -127,7 +150,7 @@ const CategoryProductsScreen = ({ route }) => {
             ) : (
 
                 <FlatList
-                    data={filteredProducts}
+                    data={displayedProducts}
                     keyExtractor={(item) => item.id.toString()}
                     numColumns={2}
                     showsVerticalScrollIndicator={false}
@@ -295,7 +318,7 @@ const styles = StyleSheet.create({
         padding: 8,
         backgroundColor: '#F2F2F2',
         width: "fit-content",
-        borderTopRightRadius: 10
+        marginTop: 10
     },
     CartButton: {
         padding: 8,

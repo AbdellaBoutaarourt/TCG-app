@@ -36,7 +36,7 @@ const SearchScreen = () => {
     return (
         <View style={styles.container}>
             <View style={styles.searchBar}>
-                <Ionicons name="search" size={20} color="gray" />
+                <Ionicons name="search" size={20} color="#AFB5B7" />
                 <TextInput
                     placeholder="Rechercher un produit"
                     style={styles.searchInput}
@@ -80,7 +80,7 @@ const SearchScreen = () => {
                 keyExtractor={(item) => item.name}
                 numColumns={2}
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ backgroundColor: '#F1F5F9', paddingVertical: 10 }}
+                contentContainerStyle={{ backgroundColor: '#F6F5F8', paddingVertical: 10 }}
                 columnWrapperStyle={{ justifyContent: "space-between", marginHorizontal: 10 }}
             />
 
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     searchBar: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#F1F5F9",
+        backgroundColor: "#F6F5F8",
         borderRadius: 100,
         paddingHorizontal: 15,
         paddingVertical: 3,
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         flex: 1,
         fontSize: 16,
-        color: "#333",
+        color: "#AFB5B7",
 
     },
     filterContainer: {
@@ -148,7 +148,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         margin: 5,
         paddingLeft: 10,
-        flexDirection: 'row-reverse'
+        flexDirection: 'row-reverse',
+        elevation: 5,
     },
     categoryImage: {
         width: 80,
