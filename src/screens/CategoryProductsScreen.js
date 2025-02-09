@@ -48,7 +48,6 @@ const CategoryProductsScreen = ({ route }) => {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                console.log(response.data)
 
                 if (response.data) {
                     setFavorites(response.data);
@@ -140,7 +139,6 @@ const CategoryProductsScreen = ({ route }) => {
                 Alert.alert('Succès', 'Produit ajouté aux favoris.');
                 setFavorites(prevFavorites => [...prevFavorites, { id: productId }]);
 
-                console.log("produit ajouté aux favoris.")
             } else {
                 Alert.alert('Erreur', 'Impossible d\'ajouter aux favoris.');
             }
@@ -151,9 +149,37 @@ const CategoryProductsScreen = ({ route }) => {
     };
 
 
-    const handleAddToCart = (productId) => {
-        console.log(`Produit ${productId} ajouté au panier`);
+    const handleAddToCart = async (productId) => {
+        try {
+            const token = await AsyncStorage.getItem('token');
+
+            if (!token) {
+                Alert.alert('Erreur', 'Vous devez être connecté pour ajouter au panier.');
+                return;
+            }
+
+            const response = await axios.post(
+                'http://localhost:3001/cart',
+                { productId },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            if (response.data) {
+                Alert.alert('Succès', 'Produit ajouté au panier.');
+                console.log('Produit ajouté au panier.')
+            } else {
+                Alert.alert('Erreur', response.data.message || 'Impossible d\'ajouter au panier.');
+            }
+        } catch (error) {
+            Alert.alert('Erreur', 'Une erreur s\'est produite lors de l\'ajout au panier.');
+            console.error(error);
+        }
     };
+
 
     const toggleSortOrder = () => {
         setSortOrder(prevOrder => prevOrder === "asc" ? "desc" : "asc");
