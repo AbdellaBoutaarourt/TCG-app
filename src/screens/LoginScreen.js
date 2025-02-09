@@ -3,27 +3,29 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } fro
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import logo from '../images/logo.png'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const LoginScreen = () => {
+const LoginScreen = ({ setIsLoggedIn }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigation = useNavigation();
 
-    const handleLogin = async ({ setIsLoggedIn }) => {
+    const handleLogin = async () => {
         if (!email || !password) {
             Alert.alert('Erreur', 'Veuillez remplir tous les champs.');
             return;
         }
 
         try {
-            const response = await axios.post('http://votre-api.com/login', {
+            const response = await axios.post('http://localhost:3001/clients/login', {
                 email,
                 password,
             });
 
             if (response.data.success) {
+                await AsyncStorage.setItem('token', response.data.token);
                 setIsLoggedIn(true);
-                navigation.navigate('Accueil');
+                Alert.alert('Succès', 'Connexion réussie.');
             } else {
                 Alert.alert('Erreur', response.data.message || 'Échec de la connexion.');
             }

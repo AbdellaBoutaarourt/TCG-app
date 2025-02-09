@@ -1,8 +1,11 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { Ionicons, FontAwesome, MaterialIcons } from '@expo/vector-icons';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import logo from '../images/logo.gif'
+
 const filters = ["Tous", "Bois", "Frigolite", "Plastique", "Papier", "Verre", "Aluminium"];
 
 
@@ -53,9 +56,36 @@ const CategoryProductsScreen = ({ route }) => {
     }, [filteredProducts, sortOrder]);
 
 
-    const handleAddToFavorites = (productId) => {
-        console.log(`Produit ${productId} ajouté aux favoris`);
+    const handleAddToFavorites = async (productId) => {
+        try {
+            const token = await AsyncStorage.getItem('token');
+
+            if (!token) {
+                Alert.alert('Erreur', 'Vous devez être connecté pour ajouter aux favoris.');
+                return;
+            }
+
+            const response = await axios.post(
+                'http://localhost:3001/favorites',
+                { productId },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            if (response.data.success) {
+                Alert.alert('Succès', 'Produit ajouté aux favoris.');
+                console.log("produit ajouté aux favoris.")
+            } else {
+                Alert.alert('Erreur', 'Impossible d\'ajouter aux favoris.');
+            }
+        } catch (error) {
+            Alert.alert('Erreur', 'Une erreur s\'est produite lors de l\'ajout aux favoris.');
+            console.error(error);
+        }
     };
+
 
     const handleAddToCart = (productId) => {
         console.log(`Produit ${productId} ajouté au panier`);

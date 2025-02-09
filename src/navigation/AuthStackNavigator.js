@@ -7,7 +7,7 @@ const Stack = createStackNavigator();
 const AuthStackNavigator = ({ setIsLoggedIn }) => {
     return (
         <Stack.Navigator>
-            <Stack.Screen name="Login" options={{ headerShown: false }}>
+            <Stack.Screen name="Connexion" options={{ headerShown: false }}>
                 {(props) => <LoginScreen {...props} setIsLoggedIn={setIsLoggedIn} />}
             </Stack.Screen>
             <Stack.Screen name="Inscription" component={SignupScreen} options={{ headerShown: false }} />

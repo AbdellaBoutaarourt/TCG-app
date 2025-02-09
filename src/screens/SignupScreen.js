@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
-import { Picker } from '@react-native-picker/picker'; // Picker compatible avec Expo
+import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons'; // Icônes Expo
+import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 
 const SignupScreen = () => {
@@ -163,7 +163,7 @@ const SignupScreen = () => {
             </TouchableOpacity>
 
             {/* Lien vers la connexion */}
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Connexion')}>
                 <Text style={styles.link}>Déjà un compte ? <Text style={styles.linkBold}>Se connecter</Text></Text>
             </TouchableOpacity>
         </ScrollView>
