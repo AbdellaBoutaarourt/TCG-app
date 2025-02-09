@@ -19,6 +19,8 @@ const CategoryProductsScreen = ({ route }) => {
     const { searchText } = route.params || {};
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [isSortedByName, setIsSortedByName] = useState(false);
+    const [favorites, setFavorites] = useState([]);
+
 
     useEffect(() => {
         fetch('http://localhost:3001/products')
@@ -32,7 +34,67 @@ const CategoryProductsScreen = ({ route }) => {
                 setError(err);
                 setLoading(false);
             });
+
     }, []);
+
+    useEffect(() => {
+        const fetchFavorites = async () => {
+            try {
+                const token = await AsyncStorage.getItem('token');
+                if (!token) return;
+
+                const response = await axios.get('http://localhost:3001/favorites', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                console.log(response.data)
+
+                if (response.data) {
+                    setFavorites(response.data);
+                }
+            } catch (error) {
+                console.error('Erreur lors de la récupération des favoris:', error);
+            }
+        };
+
+        fetchFavorites();
+    }, []);
+
+    const isFavorite = (productId) => {
+        return favorites.some(favorite => favorite.id === productId);
+    };
+
+    const handleRemoveFromFavorites = async (productId) => {
+        try {
+            const token = await AsyncStorage.getItem('token');
+
+            if (!token) {
+                Alert.alert('Erreur', 'Vous devez être connecté pour retirer des favoris.');
+                return;
+            }
+
+            const response = await axios.delete(
+                'http://localhost:3001/favorites',
+                {
+                    data: { productId },
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            if (response.data.success) {
+                Alert.alert('Succès', 'Produit retiré des favoris.');
+                setFavorites(prevFavorites => prevFavorites.filter(favorite => favorite.id !== productId));
+            } else {
+                Alert.alert('Erreur', 'Impossible de retirer des favoris.');
+            }
+        } catch (error) {
+            Alert.alert('Erreur', 'Une erreur s\'est produite lors de la suppression des favoris.');
+            console.error(error);
+        }
+    };
 
     useEffect(() => {
         let filteredData = data.filter((product) =>
@@ -74,8 +136,10 @@ const CategoryProductsScreen = ({ route }) => {
                     }
                 }
             );
-            if (response.data.success) {
+            if (response.data) {
                 Alert.alert('Succès', 'Produit ajouté aux favoris.');
+                setFavorites(prevFavorites => [...prevFavorites, { id: productId }]);
+
                 console.log("produit ajouté aux favoris.")
             } else {
                 Alert.alert('Erreur', 'Impossible d\'ajouter aux favoris.');
@@ -190,10 +254,14 @@ const CategoryProductsScreen = ({ route }) => {
                             <View style={styles.itemContainer}>
 
                                 <TouchableOpacity
-                                    onPress={() => handleAddToFavorites(item.id)}
+                                    onPress={() => isFavorite(item.id) ? handleRemoveFromFavorites(item.id) : handleAddToFavorites(item.id)}
                                     style={styles.iconButton}
                                 >
-                                    <Ionicons name="heart-outline" size={24} color="#08744E" />
+                                    <Ionicons
+                                        name={isFavorite(item.id) ? "heart" : "heart-outline"}
+                                        size={24}
+                                        color={isFavorite(item.id) ? "red" : "#08744E"}
+                                    />
                                 </TouchableOpacity>
                                 <View style={styles.imageContainer}>
                                     <Image source={{ uri: item.image }} style={styles.image} />
