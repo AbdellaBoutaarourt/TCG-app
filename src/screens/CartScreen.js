@@ -4,6 +4,7 @@ import cartImage from '../images/cart.png';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Picker } from '@react-native-picker/picker';
 
 const Cartscreen = () => {
     const navigation = useNavigation();
@@ -41,10 +42,32 @@ const Cartscreen = () => {
 
     const renderItem = ({ item }) => (
         <View style={styles.item}>
-            <Text style={styles.itemName}>{item.name}</Text>
-            <Text style={styles.itemPrice}>€ {item.price}</Text>
-            <Text style={styles.itemQuantity}>Quantité: {item.quantity}</Text>
-        </View>
+            <Image source={{ uri: item.image }} style={styles.productImage} />
+
+            <View style={{ gap: 20 }}>
+                <View style={styles.itemDetails}>
+                    <Text style={styles.itemName}>{item.name}</Text>
+                </View>
+
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={styles.itemPrice}>€ {item.price}</Text>
+                    <View style={styles.quantityContainer}>
+                        <Picker
+                            selectedValue={item.quantity}
+                            onValueChange={(value) => handleQuantityChange(item.id, value)}
+                            style={styles.quantityPicker}
+                            dropdownIconColor="#08744E"
+                        >
+                            {[...Array(10).keys()].map((i) => (
+                                <Picker.Item key={i + 1} label={`${i + 1}`} value={i + 1} />
+                            ))}
+                        </Picker>
+                    </View>
+                </View>
+
+            </View>
+        </View >
+
     );
 
     if (loading) {
@@ -130,32 +153,62 @@ const styles = StyleSheet.create({
     listContent: {
         padding: 16,
     },
-    item: {
-        backgroundColor: '#F1F5F9',
-        padding: 16,
+    productImage: {
+        width: 100,
+        height: 100,
         borderRadius: 8,
-        marginBottom: 16,
+        marginRight: 16,
+    },
+    itemDetails: {
+        flex: 1,
+        maxWidth: '100%'
+    },
+
+    item: {
+        paddingBottom: 16,
+        borderBottomWidth: 1,
+        borderColor: "#DBDBDB",
+        flexDirection: 'row',
+        alignItems: 'center'
     },
     itemName: {
-        fontSize: 16,
-        fontFamily: 'InterSemiBold',
-        marginBottom: 8,
+        fontSize: 13,
+        fontFamily: 'InterRegular',
     },
     itemPrice: {
         fontSize: 14,
         fontFamily: 'InterRegular',
         color: '#08744E',
-        marginBottom: 8,
     },
-    itemQuantity: {
+    quantityContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    quantityLabel: {
         fontSize: 14,
         fontFamily: 'InterRegular',
         color: '#666',
+        marginRight: 8,
+    },
+    quantityPicker: {
+        flex: 1,
+        height: 40,
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#e0e0e0',
+        borderRadius: 100,
+        fontSize: 14,
+        fontFamily: 'InterRegular',
+        color: '#666',
+        paddingVertical: 6,
+        paddingHorizontal: 20
+
     },
     totalContainer: {
         padding: 16,
         borderTopWidth: 1,
         borderColor: '#e0e0e0',
+        width: "100%"
     },
     totalText: {
         fontSize: 18,

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ScrollView, 
 import { Ionicons, FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Svg, { Path } from 'react-native-svg';
 
 import logo from '../images/logo.gif'
 
@@ -83,8 +84,7 @@ const CategoryProductsScreen = ({ route }) => {
                 }
             );
 
-            if (response.data.success) {
-                Alert.alert('Succès', 'Produit retiré des favoris.');
+            if (response.data) {
                 setFavorites(prevFavorites => prevFavorites.filter(favorite => favorite.id !== productId));
             } else {
                 Alert.alert('Erreur', 'Impossible de retirer des favoris.');
@@ -136,7 +136,6 @@ const CategoryProductsScreen = ({ route }) => {
                 }
             );
             if (response.data) {
-                Alert.alert('Succès', 'Produit ajouté aux favoris.');
                 setFavorites(prevFavorites => [...prevFavorites, { id: productId }]);
 
             } else {
@@ -218,9 +217,9 @@ const CategoryProductsScreen = ({ route }) => {
         <View style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity style={styles.sortButton} onPress={toggleSortOrder}>
-                    <svg width="13" height="13" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M5.85349 3.1465C6.04899 2.951 6.04899 2.635 5.85349 2.4395L3.70704 0.293C3.51204 0.0980005 3.25605 0.000499725 3.00006 0.000499725C2.74406 0.000499725 2.48807 0.0980005 2.29307 0.293L0.146622 2.4395C-0.0488739 2.635 -0.0488739 2.951 0.146622 3.1465C0.342117 3.342 0.65811 3.342 0.853606 3.1465L2.50007 1.5V11.5C2.50007 11.7765 2.72406 12 3.00006 12C3.27605 12 3.50005 11.7765 3.50005 11.5V1.5L5.14651 3.1465C5.342 3.342 5.658 3.342 5.85349 3.1465ZM10.8534 9.5605L8.70693 11.707C8.31744 12.0965 7.68245 12.0965 7.29296 11.707L5.14651 9.5605C4.95101 9.365 4.95101 9.049 5.14651 8.8535C5.342 8.658 5.658 8.658 5.85349 8.8535L7.49995 10.5V0.5C7.49995 0.2235 7.72345 0 7.99994 0C8.27644 0 8.49993 0.2235 8.49993 0.5V10.5L10.1464 8.8535C10.2439 8.756 10.3719 8.707 10.4999 8.707C10.6279 8.707 10.7559 8.756 10.8534 8.8535C11.0489 9.049 11.0489 9.365 10.8534 9.5605Z" fill="black" />
-                    </svg>
+                    <Svg width="13" height="13" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <Path d="M5.85349 3.1465C6.04899 2.951 6.04899 2.635 5.85349 2.4395L3.70704 0.293C3.51204 0.0980005 3.25605 0.000499725 3.00006 0.000499725C2.74406 0.000499725 2.48807 0.0980005 2.29307 0.293L0.146622 2.4395C-0.0488739 2.635 -0.0488739 2.951 0.146622 3.1465C0.342117 3.342 0.65811 3.342 0.853606 3.1465L2.50007 1.5V11.5C2.50007 11.7765 2.72406 12 3.00006 12C3.27605 12 3.50005 11.7765 3.50005 11.5V1.5L5.14651 3.1465C5.342 3.342 5.658 3.342 5.85349 3.1465ZM10.8534 9.5605L8.70693 11.707C8.31744 12.0965 7.68245 12.0965 7.29296 11.707L5.14651 9.5605C4.95101 9.365 4.95101 9.049 5.14651 8.8535C5.342 8.658 5.658 8.658 5.85349 8.8535L7.49995 10.5V0.5C7.49995 0.2235 7.72345 0 7.99994 0C8.27644 0 8.49993 0.2235 8.49993 0.5V10.5L10.1464 8.8535C10.2439 8.756 10.3719 8.707 10.4999 8.707C10.6279 8.707 10.7559 8.756 10.8534 8.8535C11.0489 9.049 11.0489 9.365 10.8534 9.5605Z" fill="black" />
+                    </Svg>
 
                     <Text style={styles.sortText}>Trier</Text>
                 </TouchableOpacity>
@@ -383,13 +382,13 @@ const styles = StyleSheet.create({
 
     item: {
         flex: 1,
+        flexDirection: 'column',
         margin: 4,
         alignItems: 'center',
         backgroundColor: 'white',
         borderRadius: 10,
         borderWidth: 1,
         borderColor: '#e0e0e0',
-        position: 'relative',
     },
     image: {
         width: 100,
@@ -401,9 +400,7 @@ const styles = StyleSheet.create({
         width: "100%"
     },
     itemContainer: {
-        flex: 1,
         width: '100%',
-        flexDirection: 'column',
         justifyContent: "space-between",
         alignItems: 'flex-end',
         borderBottomWidth: 1,

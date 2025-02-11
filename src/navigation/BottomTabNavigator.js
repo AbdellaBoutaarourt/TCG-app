@@ -42,7 +42,15 @@ const BottomTabNavigator = () => {
                 },
             })}
         >
-            <Tab.Screen name="Accueil" component={HomeScreen} options={{ headerTitleAlign: "center", headerTitleStyle: { fontFamily: "InterSemiBold" } }} />
+            <Tab.Screen name="Accueil" component={HomeScreen} options={{
+                headerTitleAlign: "center", headerTitleStyle: {
+                    fontFamily: "InterSemiBold"
+                },
+                headerStyle: {
+                    shadowOpacity: 0,
+                    elevation: 0,
+                },
+            }} />
             <Tab.Screen name="Recherche" component={SearchStackNavigator} options={{ headerShown: false }} />
             <Tab.Screen name="Favoris" component={FavoritesScreen} options={{ headerTitleAlign: "center", headerTitleStyle: { fontFamily: "InterSemiBold" } }} />
             <Tab.Screen name="Panier" component={CartScreen} options={{ headerTitleAlign: "center", headerTitleStyle: { fontFamily: "InterSemiBold" } }} />
