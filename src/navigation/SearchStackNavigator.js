@@ -54,12 +54,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 100,
         paddingLeft: 10,
         paddingVertical: 1,
+
+
     },
     searchInput: {
         marginLeft: 10,
         fontSize: 16,
         color: "black",
-        width: "100%"
-
+        width: '120%',
     },
 })

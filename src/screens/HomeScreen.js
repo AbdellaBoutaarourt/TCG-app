@@ -30,7 +30,7 @@ const HomeScreen = () => {
 
 
     useEffect(() => {
-        fetch('http://192.168.1.37:3001/products')
+        fetch('http://localhost:3001/products')
             .then((response) => response.json())
             .then((json) => {
                 const duplicatedData = json.products.concat(json.products);
@@ -51,7 +51,7 @@ const HomeScreen = () => {
                 const token = await AsyncStorage.getItem('token');
                 if (!token) return;
 
-                const response = await axios.get('http://192.168.1.37:3001/favorites', {
+                const response = await axios.get('http://localhost:3001/favorites', {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -82,7 +82,7 @@ const HomeScreen = () => {
             }
 
             const response = await axios.delete(
-                'http://192.168.1.37:3001/favorites',
+                'http://localhost:3001/favorites',
                 {
                     data: { productId },
                     headers: {
@@ -112,7 +112,7 @@ const HomeScreen = () => {
             }
 
             const response = await axios.post(
-                'http://192.168.1.37:3001/favorites',
+                'http://localhost:3001/favorites',
                 { productId },
                 {
                     headers: {
@@ -160,7 +160,7 @@ const HomeScreen = () => {
             }
 
             const response = await axios.post(
-                'http://192.168.1.37:3001/cart',
+                'http://localhost:3001/cart',
                 { productId },
                 {
                     headers: {
@@ -199,21 +199,24 @@ const HomeScreen = () => {
                 </View>
             </View>
             {/* Recommandations */}
-            <View style={styles.recommendationCard}>
+            <View style={{ backgroundColor: '#F1F5F9' }}>
 
-                {/* Contenu superposé */}
-                <View style={styles.recommendationContent}>
-                    <Text style={styles.recommendTitle}>Vous allez adorer ces articles</Text>
-                    <Text style={styles.recommendDescription}>Nos best-sellers à découvrir</Text>
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={styles.buttonText}>Découvrir</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.recommendationImageContainer}>
-                    <Image
-                        source={require('../images/whitebg.png')}
-                        style={styles.recommendationImage}
-                    />
+                <View style={styles.recommendationCard}>
+
+                    {/* Contenu superposé */}
+                    <View style={styles.recommendationContent}>
+                        <Text style={styles.recommendTitle}>Vous allez adorer ces articles</Text>
+                        <Text style={styles.recommendDescription}>Nos best-sellers à découvrir</Text>
+                        <TouchableOpacity style={styles.button}>
+                            <Text style={styles.buttonText}>Découvrir</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.recommendationImageContainer}>
+                        <Image
+                            source={require('../images/whitebg.png')}
+                            style={styles.recommendationImage}
+                        />
+                    </View>
                 </View>
 
             </View>
@@ -272,7 +275,7 @@ const HomeScreen = () => {
                     <Text style={styles.sectionTitle}>Catégories</Text>
                     <TouchableOpacity onPress={() => navigation.navigate("Recherche")}>
                         <Text style={styles.sectionMore}>
-                            Voir plus <AntDesign name="right" size={11} color="#01A96E" />
+                            Voir plus <AntDesign name="right" size={13} color="#01A96E" />
                         </Text>
                     </TouchableOpacity>                </View>
 
@@ -286,13 +289,36 @@ const HomeScreen = () => {
                 />
             </View>
 
+            {/* Magasin */}
+            <View style={styles.shopsection}>
+
+
+                <Text style={styles.sectionTitle}>Notre magasin</Text>
+
+                <View style={styles.shopimagesection}>
+                    <View style={styles.shopimage}>
+                        <Image
+                            source={require('../images/magasin.png')}
+                            style={styles.recommendationImage}
+                        />
+                        <View style={styles.visitLocation}>
+                            <Text style={styles.sectionMore}>Visiter L'emplacement </Text><AntDesign name="right" size={13} color="#01A96E" />
+                        </View>
+
+
+                    </View>
+                </View>
+
+            </View>
+
+
         </ScrollView >
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: "#F1F5F9",
+        flex: 1,
     },
     searchBar: {
         flexDirection: "row",
@@ -472,6 +498,23 @@ const styles = StyleSheet.create({
         backgroundColor: '#01A96E',
         borderRadius: 100
     },
+    shopsection: {
+        padding: 15,
+        backgroundColor: '#fff',
+    },
+    visitLocation: {
+        position: "absolute",
+        flexDirection: 'row',
+        alignItems: 'center',
+        bottom: 0,
+        right: 0,
+        padding: 2,
+    },
+    visitText: {
+        color: "white",
+        fontWeight: "bold",
+    },
+
 });
 
 export default HomeScreen;
