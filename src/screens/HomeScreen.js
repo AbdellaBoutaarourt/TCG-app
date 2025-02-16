@@ -200,7 +200,6 @@ const HomeScreen = () => {
             </View>
             {/* Recommandations */}
             <View style={{ backgroundColor: '#F1F5F9' }}>
-
                 <View style={styles.recommendationCard}>
 
                     {/* Contenu superposé */}
@@ -277,7 +276,8 @@ const HomeScreen = () => {
                         <Text style={styles.sectionMore}>
                             Voir plus <AntDesign name="right" size={13} color="#01A96E" />
                         </Text>
-                    </TouchableOpacity>                </View>
+                    </TouchableOpacity>
+                </View>
 
                 <FlatList
                     data={categories}
@@ -287,6 +287,53 @@ const HomeScreen = () => {
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={{ backgroundColor: '#F6F5F8', paddingVertical: 10 }}
                 />
+            </View>
+
+            {/* Section "Pour vous" */}
+            <View style={{
+                backgroundColor: 'white', padding: 15, borderTopEndRadius: 20, borderTopStartRadius: 20,
+            }}>
+                <Text style={styles.sectionTitle}>Récemment consulté</Text>
+                <FlatList
+                    data={data}
+                    keyExtractor={(item, index) => `${item.id}-${index}`}
+                    horizontal={true}
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ paddingVertical: 10 }}
+                    renderItem={({ item }) => (
+                        <View style={styles.item}>
+                            <View style={styles.itemContainer}>
+
+                                <TouchableOpacity
+                                    onPress={() => isFavorite(item.id) ? handleRemoveFromFavorites(item.id) : handleAddToFavorites(item.id)}
+                                    style={styles.iconButton}
+                                >
+                                    <Ionicons
+                                        name={isFavorite(item.id) ? "heart" : "heart-outline"}
+                                        size={24}
+                                        color={isFavorite(item.id) ? "red" : "#08744E"}
+                                    />
+                                </TouchableOpacity>
+                                <View style={styles.imageContainer}>
+                                    <Image source={{ uri: item.image }} style={styles.image} />
+                                </View>
+                                <TouchableOpacity
+                                    onPress={() => handleAddToCart(item.id)}
+                                    style={{ padding: 7, backgroundColor: '#01A96E' }}
+                                >
+                                    <FontAwesome name="cart-plus" size={24} color="white" />
+                                </TouchableOpacity>
+                            </View>
+
+                            <Text style={styles.itemName}>{item.name}</Text>
+                            <Text style={styles.itemMinQuantity}>Référence: {item.reference}</Text>
+                            <Text style={styles.itemPrice}>€ {item.price}</Text>
+                        </View>
+
+                    )
+                    }
+                />
+
             </View>
 
             {/* Magasin */}
@@ -345,7 +392,6 @@ const styles = StyleSheet.create({
         fontFamily: 'InterSemiBold',
         color: "#737171"
     },
-
     recommendationCard: {
         paddingLeft: 20,
         backgroundColor: '#FFF3E7',
@@ -355,6 +401,7 @@ const styles = StyleSheet.create({
         margin: 20,
         flexDirection: 'row',
         justifyContent: 'space-between',
+        elevation: 5,
     },
     recommendationContent: {
         flex: 1,
@@ -427,7 +474,7 @@ const styles = StyleSheet.create({
     categoryText: {
         fontSize: 10,
         fontFamily: "InterRegular",
-        textAlign: "left",
+        textAlign: "center",
         maxWidth: 100,
         color: '#444444',
         marginVertical: 5
@@ -501,14 +548,22 @@ const styles = StyleSheet.create({
     shopsection: {
         padding: 15,
         backgroundColor: '#fff',
+
+    },
+    shopimagesection: {
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        elevation: 5,
+        marginVertical: 10
     },
     visitLocation: {
         position: "absolute",
         flexDirection: 'row',
         alignItems: 'center',
-        bottom: 0,
+        bottom: 5,
         right: 0,
         padding: 2,
+
     },
     visitText: {
         color: "white",
