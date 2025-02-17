@@ -285,7 +285,7 @@ const HomeScreen = () => {
                     keyExtractor={(item) => item.name}
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={{ backgroundColor: '#F6F5F8', paddingVertical: 10 }}
+                    contentContainerStyle={{ paddingVertical: 10, justifyContent: 'center' }}
                 />
             </View>
 

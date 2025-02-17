@@ -157,9 +157,6 @@ const SearchScreen = () => {
     };
 
     useEffect(() => {
-        console.log("Données brutes :", data);
-        console.log("Texte de recherche :", searchText);
-        console.log("Filtre sélectionné :", selectedFilter);
 
         if (searchText.trim() === "") {
             setFilteredProducts([]);
@@ -173,7 +170,6 @@ const SearchScreen = () => {
             return matchMaterial && matchSearch;
         });
 
-        console.log("Produits filtrés :", filteredData);
         setFilteredProducts(filteredData);
     }, [searchText, data, selectedFilter]);
 
@@ -320,7 +316,7 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         flex: 1,
         fontSize: 16,
-        color: "#AFB5B7",
+        color: "black",
 
     },
     filterContainer: {

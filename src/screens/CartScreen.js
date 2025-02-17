@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
+import Feather from '@expo/vector-icons/Feather';
 
 const Cartscreen = () => {
     const navigation = useNavigation();
@@ -36,20 +37,55 @@ const Cartscreen = () => {
         fetchCartItems();
     }, []);
 
+    const handleDeleteItem = async (productId) => {
+        try {
+            const token = await AsyncStorage.getItem('token');
+            if (!token) return;
+
+            const response = await axios.delete('http://localhost:3001/cart', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                data: { productId },
+            });
+
+            if (response.data) {
+                setCartItems(prevItems => prevItems.filter(item => item.id !== productId));
+            }
+        } catch (error) {
+            console.error('Erreur lors de la suppression du produit:', error);
+        }
+    };
+
+
     const handleSearchButtonPress = () => {
         navigation.navigate('Recherche');
     };
+
+    const handleQuantityChange = async (itemId, newQuantity) => {
+        setCartItems(prevItems =>
+            prevItems.map(item =>
+                item.id === itemId ? { ...item, quantity: newQuantity } : item
+            )
+        );
+
+    };
+
 
     const renderItem = ({ item }) => (
         <View style={styles.item}>
             <Image source={{ uri: item.image }} style={styles.productImage} />
 
-            <View style={{ gap: 20 }}>
+            <View style={{ flex: 1, gap: 30, }}>
                 <View style={styles.itemDetails}>
                     <Text style={styles.itemName}>{item.name}</Text>
+                    <TouchableOpacity onPress={() => handleDeleteItem(item.id)}>
+                        <Feather name="x" size={24} color="black" />
+                    </TouchableOpacity>
+
                 </View>
 
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Text style={styles.itemPrice}>€ {item.price}</Text>
                     <View style={styles.quantityContainer}>
                         <Picker
@@ -93,14 +129,20 @@ const Cartscreen = () => {
 
     return (
         <View style={styles.container}>
-            <FlatList
-                data={cartItems}
-                renderItem={renderItem}
-                keyExtractor={item => item.id.toString()}
-                contentContainerStyle={styles.listContent}
-            />
+            <View style={{
+                flex: 1,
+                padding: 10,
+            }}>
+
+                <FlatList
+                    data={cartItems}
+                    renderItem={renderItem}
+                    keyExtractor={item => item.id.toString()}
+                />
+            </View>
+
             <View style={styles.totalContainer}>
-                <Text style={styles.totalText}>Prix total: € {cartItems.reduce((total, item) => total + (item.price * item.quantity), 0)}</Text>
+                <Text style={styles.totalText}>Prix total: € {cartItems.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2)}</Text>
                 <Text style={styles.vatText}>TVA incluse</Text>
                 <Text style={styles.shippingText}>Livraison Gratuite</Text>
                 <TouchableOpacity style={styles.checkoutButton}>
@@ -114,9 +156,8 @@ const Cartscreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
         backgroundColor: '#fff',
+        justifyContent: 'center'
     },
     cartImage: {
         width: 280,
@@ -150,30 +191,32 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontFamily: 'InterSemiBold',
     },
-    listContent: {
-        padding: 16,
-    },
     productImage: {
         width: 100,
         height: 100,
         borderRadius: 8,
-        marginRight: 16,
     },
     itemDetails: {
-        flex: 1,
-        maxWidth: '100%'
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 12
     },
 
     item: {
-        paddingBottom: 16,
+        paddingVertical: 15,
         borderBottomWidth: 1,
         borderColor: "#DBDBDB",
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        borderStyle: 'dashed',
+        flex: 1,
+        justifyContent: 'space-between',
+        gap: 20,
     },
     itemName: {
         fontSize: 13,
         fontFamily: 'InterRegular',
+        flex: 1,
     },
     itemPrice: {
         fontSize: 14,
@@ -181,29 +224,19 @@ const styles = StyleSheet.create({
         color: '#08744E',
     },
     quantityContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#D3D3D3',
+        borderRadius: 100,
+        width: 100,
+        height: 30,
+        justifyContent: 'center'
     },
     quantityLabel: {
         fontSize: 14,
         fontFamily: 'InterRegular',
-        color: '#666',
-        marginRight: 8,
+        color: 'black',
     },
-    quantityPicker: {
-        flex: 1,
-        height: 40,
-        backgroundColor: '#fff',
-        borderWidth: 1,
-        borderColor: '#e0e0e0',
-        borderRadius: 100,
-        fontSize: 14,
-        fontFamily: 'InterRegular',
-        color: '#666',
-        paddingVertical: 6,
-        paddingHorizontal: 20
 
-    },
     totalContainer: {
         padding: 16,
         borderTopWidth: 1,
