@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList } from 'react-native';
+import React, { useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, Linking } from 'react-native';
 import cartImage from '../images/cart.png';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
@@ -11,31 +12,34 @@ const Cartscreen = () => {
     const navigation = useNavigation();
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [deliveryMethod, setDeliveryMethod] = useState('shipping');
 
-    useEffect(() => {
-        const fetchCartItems = async () => {
-            try {
-                const token = await AsyncStorage.getItem('token');
-                if (!token) return;
+    useFocusEffect(
+        React.useCallback(() => {
+            const fetchCartItems = async () => {
+                try {
+                    const token = await AsyncStorage.getItem('token');
+                    if (!token) return;
 
-                const response = await axios.get('http://localhost:3001/cart', {
-                    headers: {
-                        Authorization: `Bearer ${token}`
+                    const response = await axios.get('http://localhost:3001/cart', {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                    if (response.data) {
+                        setCartItems(response.data);
                     }
-                });
-
-                if (response.data) {
-                    setCartItems(response.data);
+                } catch (error) {
+                    console.error('Erreur lors de la récupération des produits du panier:', error);
+                } finally {
+                    setLoading(false);
                 }
-            } catch (error) {
-                console.error('Erreur lors de la récupération des produits du panier:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
+            };
 
-        fetchCartItems();
-    }, []);
+            fetchCartItems();
+        }, [])
+    );
 
     const handleDeleteItem = async (productId) => {
         try {
@@ -61,6 +65,62 @@ const Cartscreen = () => {
     const handleSearchButtonPress = () => {
         navigation.navigate('Recherche');
     };
+
+    const handleCheckout = async () => {
+        try {
+            const token = await AsyncStorage.getItem('token');
+            if (!token) {
+                Alert.alert('Erreur', 'Vous devez être connecté pour passer une commande.');
+                return;
+            }
+
+            const products = cartItems.map(item => ({
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity,
+                image: item.image,
+            }));
+
+            const response = await axios.post(
+                'http://localhost:3001/payment/create-checkout-session',
+                { products, deliveryMethod },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (response.data && response.data.id) {
+                const sessionId = response.data.id;
+                const stripeUrl = `https://checkout.stripe.com/pay/${sessionId}`;
+
+                const canOpen = await Linking.canOpenURL(stripeUrl);
+                if (canOpen) {
+                    await Linking.openURL(stripeUrl);
+
+                    // check user feedback after payement
+                    Linking.addEventListener('url', (event) => {
+                        const url = event.url;
+                        if (url.includes('success')) {
+                            navigation.navigate('OrderConfirmation', { sessionId });
+                        } else if (url.includes('cancel')) {
+                            navigation.navigate('PaymentError');
+                        }
+                    });
+                } else {
+                    Alert.alert('Erreur', 'Impossible d\'ouvrir le lien de paiement.');
+                }
+            } else {
+                Alert.alert('Erreur', 'Impossible de créer la session de paiement.');
+            }
+        } catch (error) {
+            console.error('Erreur lors du passage à la caisse:', error);
+            Alert.alert('Erreur', 'Une erreur s\'est produite lors du passage à la caisse.');
+        }
+    };
+
 
     const handleQuantityChange = async (itemId, newQuantity) => {
         setCartItems(prevItems =>
@@ -145,7 +205,7 @@ const Cartscreen = () => {
                 <Text style={styles.totalText}>Prix total: € {cartItems.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2)}</Text>
                 <Text style={styles.vatText}>TVA incluse</Text>
                 <Text style={styles.shippingText}>Livraison Gratuite</Text>
-                <TouchableOpacity style={styles.checkoutButton}>
+                <TouchableOpacity style={styles.checkoutButton} onPress={handleCheckout}>
                     <Text style={styles.checkoutButtonText}>Caisse</Text>
                 </TouchableOpacity>
             </View>

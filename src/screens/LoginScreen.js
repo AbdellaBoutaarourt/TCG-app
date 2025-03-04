@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
@@ -9,12 +9,37 @@ const LoginScreen = ({ setIsLoggedIn }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigation = useNavigation();
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const checkConnection = async () => {
+            const token = await AsyncStorage.getItem("token");
+            if (!token) return;
+
+            try {
+                const response = await axios.get("http://localhost:3001/clients/check-connection", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                if (response.data.success) {
+                    setIsLoggedIn(true);
+                }
+            } catch (error) {
+                console.error("Erreur de vérification de connexion:", error);
+                await AsyncStorage.removeItem("token");
+            }
+        };
+
+        checkConnection();
+    }, []);
 
     const handleLogin = async () => {
         if (!email || !password) {
             Alert.alert('Erreur', 'Veuillez remplir tous les champs.');
             return;
         }
+
+        setLoading(true);
 
         try {
             const response = await axios.post('http://localhost:3001/clients/login', {
@@ -32,6 +57,8 @@ const LoginScreen = ({ setIsLoggedIn }) => {
         } catch (error) {
             Alert.alert('Erreur', 'Une erreur s\'est produite lors de la connexion.');
             console.error(error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -55,8 +82,8 @@ const LoginScreen = ({ setIsLoggedIn }) => {
                 onChangeText={setPassword}
                 secureTextEntry
             />
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                <Text style={styles.buttonText}>Se connecter</Text>
+            <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
+                <Text style={styles.buttonText}>{loading ? 'Connexion...' : 'Se connecter'}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('Inscription')}>
                 <Text style={styles.link}>Pas de compte ? <Text style={styles.linkBold}>S'inscrire</Text></Text>

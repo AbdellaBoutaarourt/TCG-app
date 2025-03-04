@@ -3,8 +3,8 @@ import { Ionicons, FontAwesome, AntDesign } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import logo from '../images/logo.gif'
-import { useNavigation } from '@react-navigation/native';
-
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { Alert } from 'react-native';
 import {
     View,
     Text,
@@ -45,28 +45,32 @@ const HomeScreen = () => {
     }, []);
 
 
-    useEffect(() => {
-        const fetchFavorites = async () => {
-            try {
-                const token = await AsyncStorage.getItem('token');
-                if (!token) return;
+    useFocusEffect(
+        React.useCallback(() => {
 
-                const response = await axios.get('http://localhost:3001/favorites', {
-                    headers: {
-                        Authorization: `Bearer ${token}`
+            const fetchFavorites = async () => {
+                try {
+                    const token = await AsyncStorage.getItem('token');
+                    if (!token) return;
+
+                    const response = await axios.get('http://localhost:3001/favorites', {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                    if (response.data) {
+                        setFavorites(response.data);
                     }
-                });
-
-                if (response.data) {
-                    setFavorites(response.data);
+                } catch (error) {
+                    console.error('Erreur lors de la récupération des favoris:', error);
                 }
-            } catch (error) {
-                console.error('Erreur lors de la récupération des favoris:', error);
-            }
-        };
+            };
 
-        fetchFavorites();
-    }, []);
+            fetchFavorites();
+        }, [])
+    );
+
 
     const isFavorite = (productId) => {
         return favorites.some(favorite => favorite.id === productId);
@@ -279,14 +283,17 @@ const HomeScreen = () => {
                     </TouchableOpacity>
                 </View>
 
-                <FlatList
-                    data={categories}
-                    renderItem={renderCategoryItem}
-                    keyExtractor={(item) => item.name}
-                    horizontal={true}
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={{ paddingVertical: 10, justifyContent: 'center' }}
-                />
+                <View style={{ alignItems: 'center' }}>
+                    <FlatList
+                        data={categories}
+                        renderItem={renderCategoryItem}
+                        keyExtractor={(item) => item.name}
+                        horizontal={true}
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={{ paddingVertical: 10, justifyContent: 'center' }}
+                    />
+                </View>
+
             </View>
 
             {/* Section "Pour vous" */}

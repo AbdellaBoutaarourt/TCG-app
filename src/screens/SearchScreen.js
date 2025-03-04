@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, ScrollView, TouchableOpacity, StyleSheet, FlatList, Image } from "react-native";
+import { View, Text, TextInput, ScrollView, TouchableOpacity, StyleSheet, FlatList, Image, Alert } from "react-native";
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const categories = [
     { name: "Assiettes & plateaux", image: require('../images/assietes.png') },
@@ -44,7 +46,7 @@ const SearchScreen = () => {
                 const token = await AsyncStorage.getItem('token');
                 if (!token) return;
 
-                const response = await axios.get('http://localhost:3001/favorites', {
+                const response = await axios.get('http://192.168.1.37:3001/favorites', {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -75,7 +77,7 @@ const SearchScreen = () => {
             }
 
             const response = await axios.post(
-                'http://localhost:3001/favorites',
+                'http://192.168.1.37:3001/favorites',
                 { productId },
                 {
                     headers: {
@@ -105,7 +107,7 @@ const SearchScreen = () => {
             }
 
             const response = await axios.delete(
-                'http://localhost:3001/favorites',
+                'http://192.168.1.37:3001/favorites',
                 {
                     data: { productId },
                     headers: {
@@ -135,7 +137,7 @@ const SearchScreen = () => {
             }
 
             const response = await axios.post(
-                'http://localhost:3001/cart',
+                'http://192.168.1.37:3001/cart',
                 { productId },
                 {
                     headers: {
