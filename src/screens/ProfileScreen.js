@@ -51,7 +51,6 @@ const ProfileScreen = () => {
                 if (response.status === 200) {
                     setFormData(response.data.client);
                 }
-                console.log(response)
             } catch (error) {
                 console.error("Erreur lors de la récupération des informations du client", error);
             }
@@ -61,13 +60,21 @@ const ProfileScreen = () => {
 
     const handleUpdateProfile = async () => {
         try {
+            const token = await AsyncStorage.getItem('token');
+
             const response = await axios.put('http://localhost:3001/clients/profile', formData, {
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             });
             if (response.status === 200) {
                 Alert.alert("Succès", "Profil mis à jour !");
+                console.error("Succès", "Profil mis à jour !");
+
             } else {
                 Alert.alert("Erreur", response.data.message);
+                console.error("Erreur lors de la récupération des informations du client", error);
+
             }
         } catch (error) {
             Alert.alert("Erreur", "Impossible de mettre à jour les données");
@@ -76,7 +83,6 @@ const ProfileScreen = () => {
 
     return (
         <View style={styles.container}>
-            {/* Barre de navigation */}
             <View style={styles.navbar}>
                 <TouchableOpacity onPress={() => setActiveSection('personalData')} style={[styles.navButton, activeSection === 'personalData' && styles.activeButton]}>
                     <Text style={styles.navText}>Données Personnelles</Text>
@@ -84,9 +90,7 @@ const ProfileScreen = () => {
                 <TouchableOpacity onPress={() => setActiveSection('orderHistory')} style={[styles.navButton, activeSection === 'orderHistory' && styles.activeButton]}>
                     <Text style={styles.navText}>Commandes</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => setActiveSection('emailPreferences')} style={[styles.navButton, activeSection === 'emailPreferences' && styles.activeButton]}>
-                    <Text style={styles.navText}>Préférences Email</Text>
-                </TouchableOpacity>
+
             </View>
 
             <ScrollView style={styles.content}>
@@ -97,7 +101,9 @@ const ProfileScreen = () => {
                         <TextInput style={styles.input} placeholder="Prénom" value={formData.firstName} onChangeText={(text) => setFormData({ ...formData, firstName: text })} />
                         <TextInput style={styles.input} placeholder="Email" value={formData.email} onChangeText={(text) => setFormData({ ...formData, email: text })} />
                         <TextInput style={styles.input} placeholder="Téléphone" value={formData.phoneNumber} onChangeText={(text) => setFormData({ ...formData, phoneNumber: text })} />
-                        <Button title="Mettre à jour" onPress={handleUpdateProfile} />
+                        <TouchableOpacity style={styles.buttonUpdate} onPress={handleUpdateProfile}>
+                            <Text style={styles.buttonText}>Mettre à jour</Text>
+                        </TouchableOpacity>
                     </View>
                 )}
 
@@ -126,15 +132,11 @@ const ProfileScreen = () => {
                     </View>
                 )}
 
-                {activeSection === 'emailPreferences' && (
-                    <Text style={styles.title}>Préférences Email (À implémenter...)</Text>
-                )}
             </ScrollView>
         </View>
     );
 };
 
-// 🎨 Styles
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -144,7 +146,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         paddingVertical: 15,
-        backgroundColor: '#007bff',
     },
     navButton: {
         paddingVertical: 10,
@@ -152,19 +153,31 @@ const styles = StyleSheet.create({
     },
     activeButton: {
         borderBottomWidth: 2,
-        borderBottomColor: '#fff',
+        borderBottomColor: '#01A96E',
     },
-    navText: {
+    buttonUpdate: {
+        backgroundColor: '#01A96E',
+        paddingVertical: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+        marginTop: 10,
+    },
+    buttonText: {
         color: '#fff',
         fontSize: 16,
-        fontWeight: 'bold',
+        fontFamily: 'InterBold',
+    },
+
+    navText: {
+        fontSize: 16,
+        fontFamily: 'InterSemiBold',
     },
     content: {
         padding: 15,
     },
     title: {
         fontSize: 22,
-        fontWeight: 'bold',
+        fontFamily: 'InterBold',
         marginBottom: 10,
     },
     input: {
