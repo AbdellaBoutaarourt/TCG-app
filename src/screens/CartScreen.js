@@ -84,7 +84,12 @@ const Cartscreen = () => {
 
             const response = await axios.post(
                 'http://localhost:3001/payment/create-checkout-session',
-                { products, deliveryMethod },
+                {
+                    products,
+                    deliveryMethod,
+                    successUrl: "http://localhost:8081/success",
+                    cancelUrl: "http://localhost:8081/error"
+                },
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -94,7 +99,7 @@ const Cartscreen = () => {
 
             if (response.data && response.data.id) {
                 const sessionId = response.data.id;
-                const stripeUrl = `https://checkout.stripe.com/pay/${sessionId}`;
+                const stripeUrl = response.data.url;
 
                 const canOpen = await Linking.canOpenURL(stripeUrl);
                 if (canOpen) {
