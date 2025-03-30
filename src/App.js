@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useFonts } from 'expo-font';
 import { View, Image, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import BottomTabNavigator from './navigation/BottomTabNavigator';

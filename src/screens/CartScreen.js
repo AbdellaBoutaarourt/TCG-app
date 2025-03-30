@@ -98,22 +98,12 @@ const Cartscreen = () => {
             );
 
             if (response.data && response.data.id) {
-                const sessionId = response.data.id;
                 const stripeUrl = response.data.url;
 
                 const canOpen = await Linking.canOpenURL(stripeUrl);
                 if (canOpen) {
                     await Linking.openURL(stripeUrl);
 
-                    // check user feedback after payement
-                    Linking.addEventListener('url', (event) => {
-                        const url = event.url;
-                        if (url.includes('success')) {
-                            navigation.navigate('OrderConfirmation', { sessionId });
-                        } else if (url.includes('cancel')) {
-                            navigation.navigate('PaymentError');
-                        }
-                    });
                 } else {
                     Alert.alert('Erreur', 'Impossible d\'ouvrir le lien de paiement.');
                 }

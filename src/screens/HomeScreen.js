@@ -4,15 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import logo from '../images/logo.gif'
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { Alert } from 'react-native';
-import {
-    View,
-    Text,
-    StyleSheet,
-    TextInput,
-    ScrollView,
-    Image, FlatList, TouchableOpacity,
-} from "react-native";
+import { View, Text, StyleSheet, TextInput, ScrollView, Image, FlatList, TouchableOpacity, Alert, Modal, Button } from "react-native";
 
 const categories = [
     { name: "Assiettes & plateaux", image: require('../images/assietes1.png') },
@@ -27,9 +19,11 @@ const HomeScreen = () => {
     const [loading, setLoading] = useState(true);
     const [searchText, setSearchText] = useState('');
     const navigation = useNavigation();
-
+    const [isPaymentSuccess, setIsPaymentSuccess] = useState(false);
 
     useEffect(() => {
+        const currentUrl = window.location.href;
+
         fetch('http://localhost:3001/products')
             .then((response) => response.json())
             .then((json) => {
@@ -42,7 +36,19 @@ const HomeScreen = () => {
                 setLoading(false);
             });
 
+        if (currentUrl.includes('success')) {
+            setIsPaymentSuccess(true);
+        }
+
     }, []);
+
+    const handlePaymentSuccess = () => {
+        setIsPaymentSuccess(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsPaymentSuccess(false);
+    };
 
 
     useFocusEffect(
@@ -202,6 +208,32 @@ const HomeScreen = () => {
                     />
                 </View>
             </View>
+            {/* Payment success pop-up */}
+            <Modal
+                transparent={true}
+                visible={isPaymentSuccess}
+                animationType="fade"
+                onRequestClose={handleCloseModal}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <Text style={styles.modalTitle}>Paiement réussi !</Text>
+                        <Text style={styles.modalMessage}>Merci pour votre commande !</Text>
+                        <TouchableOpacity style={styles.CloseButton} onPress={handleCloseModal}>
+                            <Text style={styles.CloseButtonText}>Fermer</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+            {isPaymentSuccess && (
+                <TouchableOpacity
+                    style={styles.paymentButton}
+                    onPress={handlePaymentSuccess}
+                >
+                    <Text style={styles.paymentButtonText}>Paiement Réussi</Text>
+                </TouchableOpacity>
+            )}
+
             {/* Recommandations */}
             <View style={{ backgroundColor: '#F1F5F9' }}>
                 <View style={styles.recommendationCard}>
@@ -365,7 +397,6 @@ const HomeScreen = () => {
 
             </View>
 
-
         </ScrollView >
     );
 };
@@ -392,6 +423,50 @@ const styles = StyleSheet.create({
         color: "black",
         width: "100%"
 
+    },
+    modalOverlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContainer: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        alignItems: 'center',
+        width: 300,
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    modalMessage: {
+        fontSize: 16,
+        marginBottom: 20,
+    },
+    paymentButton: {
+        backgroundColor: '#01A96E',
+        padding: 10,
+        marginTop: 20,
+        alignItems: 'center',
+    },
+    CloseButton: {
+        backgroundColor: '#01A96E',
+        padding: 10,
+        marginTop: 20,
+        alignItems: 'center',
+        borderRadius: 100,
+        paddingHorizontal: 15,
+    },
+    CloseButtonText: {
+        color: 'white'
+
+    },
+    paymentButtonText: {
+        color: 'white',
+        fontSize: 16,
     },
     recommendDescription: {
         fontSize: 11,
