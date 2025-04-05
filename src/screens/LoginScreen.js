@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import logo from '../images/logo.png'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,6 +10,13 @@ const LoginScreen = ({ setIsLoggedIn }) => {
     const [password, setPassword] = useState('');
     const navigation = useNavigation();
     const [loading, setLoading] = useState(false);
+    const route = useRoute();
+
+    useFocusEffect(() => {
+        if (route.params?.message) {
+            Alert.alert('Succès', route.params.message);
+        }
+    });
 
     useEffect(() => {
         const checkConnection = async () => {
@@ -85,6 +92,9 @@ const LoginScreen = ({ setIsLoggedIn }) => {
             <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
                 <Text style={styles.buttonText}>{loading ? 'Connexion...' : 'Se connecter'}</Text>
             </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Mot de passe oublié')}>
+                <Text style={styles.forgotPassword}>Mot de passe oublié ?</Text>
+            </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('Inscription')}>
                 <Text style={styles.link}>Pas de compte ? <Text style={styles.linkBold}>S'inscrire</Text></Text>
             </TouchableOpacity>
@@ -140,6 +150,14 @@ const styles = StyleSheet.create({
         fontFamily: 'InterBold',
         color: '#01A96E',
     },
+    forgotPassword: {
+        color: '#01A96E',
+        textAlign: 'center',
+        marginTop: 10,
+        marginBottom: 10,
+        fontFamily: 'InterSemiBold',
+    },
+
 });
 
 export default LoginScreen;

@@ -14,6 +14,18 @@ export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isReady, setIsReady] = useState(false);
 
+  const linking = {
+    prefixes: ['http://localhost:8081', 'myapp://'],
+    config: {
+      screens: {
+        'Reinitialisation Mot De Passe': {
+          path: 'reset-password/:token',
+        },
+      },
+    },
+  };
+
+
   useEffect(() => {
     async function prepare() {
       try {
@@ -44,7 +56,7 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       {isLoggedIn ? (
         <BottomTabNavigator />
       ) : (
